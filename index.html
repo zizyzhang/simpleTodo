@@ -4,8 +4,63 @@
     <meta charset="UTF-8">
     <title>SimpleTodo</title>
     <script src="main.js"></script>
+
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css"/>
+
+
+    <script>
+
+        function comment(){
+            var com =  $('#comment');
+            $.get('http://localhost:3000/todo',function(data){
+                com.html("");
+                console.log(data);
+                for(var i=0;i<data.length;i++){
+                    console.log(i);
+
+                    com.html(com.html()+"<h1 class=text-info>"+data[i].content+"</h1>"+"<p>"+data[i].status+"</p> <hr>");
+//                <div id="comment">Test</div>
+
+                }
+
+
+            });
+        }
+        $(document).ready(function(){
+
+
+
+            comment();
+            $('#btn').click(function(){
+
+                $.post('http://localhost:3000/todo',{
+                    content: $('#content').val()
+                    , status: 0 //UI處理選取
+                });
+
+                comment();
+            });
+
+        });
+
+    </script>
+
 </head>
-<body>
+<body >
+
+
+
+
+<div class="container">
+
+    <input type="text" class="form-control" id="content" placeholder="your name">
+    <button class="form-control btn-success" id="btn">Post</button>
+    <h1 class="center">Comments</h1>
+    <div class="la" id="comment">Test</div>
+
+</div>
 
 </body>
 </html>

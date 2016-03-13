@@ -3,6 +3,10 @@
  */
 var express = require('express');
 var bodyParser = require('body-parser');
+var db = require('./database.js');
+db.connect();
+db.getTodo();
+
 var app = express();
 var arr ;
 
@@ -10,6 +14,8 @@ var todoList = [
     {id:0,status:0,content:'eat'},
     {id:1,status:1,content:'play'}
 ];
+
+
 var maxId=1;
 
 
@@ -32,28 +38,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/del/todo/:id',function(req,res){
 //splice
 
-    var isSuccess=0;
-    for(var index in todoList){
-        if(todoList[index].id==req.paramas.id){
-             todoList[index].status=-1;
-            var isSuccess=1;
 
-            break;
-        }
-    }
-
-    res.json({success:isSuccess});
+    res.json({success:delTodoById(req.paramas.id)});
 
  });
 
 
 app.get('/del/allComplete',function(req,res){
 //全刪
-     for(var index in todoList){
-        if(todoList[index].status==1){
-            todoList[index].status=-1;
-         }
-    }
+    delAllComplete();
 
     res.json({success:1});
 
@@ -63,15 +56,15 @@ app.post('/todo',function(req,res){
         var status = req.body.status;
 
         maxId++;
-        todoList.push({id:maxId,content: content,status:status});
-         res.json({success:1});
+        addTodo(maxId,content,status);
+        res.json({success:1});
 
     }
 );
 
 app.get('/todo',function(req,res){
      // Pass to next layer of middleware
-    res.json(todoList);
+    res.json(getTodo());
 });
 
 
@@ -80,3 +73,37 @@ app.listen(3000, function () {
     console.log('' +
         'app listening on port 3000!');
 });
+
+
+function getTodo(){
+    return  todoList ;
+
+}
+
+function addTodo(id,content,status){
+    todoList.push({id:id,content: content,status:status});
+}
+
+function delTodoById(id){
+    var isSuccess=0;
+
+    for(var index in todoList){
+        if(todoList[index].id=id){
+            todoList[index].status=-1;
+            var isSuccess=1;
+
+            break;
+        }
+    }
+
+    return isSuccess;
+}
+
+function delAllComplete(){
+    for(var index in todoList){
+        if(todoList[index].status==1){
+            todoList[index].status=-1;
+        }
+    }
+
+ }

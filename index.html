@@ -3,9 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>SimpleTodo</title>
+    <script src="bootstrap\js\jquery-2.2.0.min.js"></script>
+    <script src="bootstrap\js\bootstrap.js"></script>
+    <link rel="stylesheet" href="bootstrap\css\bootstrap.css"/>
     <script src="main.js"></script>
+    <style>
+        input{
+            margin-top: 10px;
+        }
+
+        .list-style{
+            list-style:none;
+
+        }
+        button{
+            position: absolute;
+            right: 20%;
+
+        }
+    </style>
+
 </head>
 <body>
+
+    <div class="container">
+        <h1 class="text-center text-info">Todo</h1>
+        <input class="form-control" type="text" id="todo" placeholder="enter your todo here" autofocus>
+        <ul class="list-style text-info" id="todo-list">
+
+        </ul>
+
+        <button id="delAllComplete" class="btn btn-default">
+            delete all complete
+        </button>
+    </div>
 
 </body>
 </html>

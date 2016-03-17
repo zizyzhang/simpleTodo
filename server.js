@@ -63,17 +63,22 @@ app.post('/todo',function(req,res){
         var status = req.body.status;
 
         maxId++;
-        todoList.push({id:maxId,content: content,status:status});
+        todoList.push({id:maxId,status:status,content: content});
          res.json({success:1});
 
     }
 );
 
 app.get('/todo',function(req,res){
+
+    console.log(todoList);
      // Pass to next layer of middleware
     res.json(todoList);
 });
 
+app.get('/update/todo/:todoid',function(req,res){
+    console.log("In server's"+req.paramas.id);
+});
 
 
 app.listen(3000, function () {

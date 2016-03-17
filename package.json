@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/zizyzhang/simpleTodo/issues"
   },
-  "homepage": "https://github.com/zizyzhang/simpleTodo#readme"
+  "homepage": "https://github.com/zizyzhang/simpleTodo#readme",
+  "dependencies": {
+    "lodash": "^4.6.1"
+  }
 }

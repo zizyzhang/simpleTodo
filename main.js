@@ -48,6 +48,7 @@ function getTodo(){
 
         for(var i=0;i<data.length;i++) {
             //console.log(data[i].id);
+            if (data[i].status== -1 || data[i].status== 1 )continue;
 
             var  compiled=  _.template($('#tpl').html());
 
@@ -79,7 +80,7 @@ function postTodo(){
 function deleteTodo(index){
     console.log(index);
     $.get("http://localhost:3000/del/todo/"+index,function(data){
-
+        getTodo();
     });
 
 }
@@ -87,6 +88,8 @@ function deleteTodo(index){
 function deleteAllTodo(){
 
     $.get("http://localhost:3000/del/allComplete/",function(data){
+        getTodo();
+
 
     });
 }
@@ -96,7 +99,7 @@ function selectTodo(f){
     console.log(f);
 
     $.get("http://localhost:3000/update/todo/"+f,function(){
-
+        getTodo();
     });
 
 }

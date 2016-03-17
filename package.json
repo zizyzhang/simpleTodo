@@ -17,6 +17,8 @@
     "url": "https://github.com/zizyzhang/simpleTodo/issues"
   },
   "homepage": "https://github.com/zizyzhang/simpleTodo#readme",
-  "dependencies": {
-   }
+  "dependencies": {},
+  "devDependencies": {
+    "sqlite3": "^3.1.1"
+  }
 }

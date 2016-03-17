@@ -4,7 +4,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var db = require('./database.js');
-db.connect();
+db.connect(function(err){
+    if(!err){
+        initMaxId();
+    }
+});
+
 //db.getTodo();
 //updateTodo('2');
 
@@ -18,7 +23,7 @@ var todoList = [
 ];
 
 
-var maxId = 1;
+var maxId;
 
 
 var allowCrossDomain = function (req, res, next) {
@@ -40,16 +45,15 @@ app.get('/del/todo/:id', function (req, res) {
 //splice
 
 
-    res.json({success: delTodoById(req.paramas.id)});
+    delTodoById(res,req.params.id);
 
 });
 
 
 app.get('/del/allComplete', function (req, res) {
 //全刪
-    delAllComplete();
+    delAllComplete(res);
 
-    res.json({success: 1});
 
 });
 app.post('/todo', function (req, res) {
@@ -57,20 +61,21 @@ app.post('/todo', function (req, res) {
         var status = req.body.status;
 
         maxId++;
-         addTodo(maxId, content, status);
-        res.json({success: 1});
+         addTodo(res, maxId, content, status);
 
     }
 );
 
  app.get('/todo', function (req, res) {
     // Pass to next layer of middleware
-    res.json(getTodo(res));
+    getTodo(res);
 });
 
-app.get('/update/todo/:todoId', function (req, res) {
+app.get('/update/todo/:id', function (req, res) {
     // Pass to next layer of middleware
-    res.json(updateTodo(req.paramas.id));
+    console.log("server id : " + req.params.id);
+
+    updateTodo(res,req.params.id);
  });
 
 
@@ -80,7 +85,7 @@ app.listen(3000, function () {
 });
 
 
-function updateTodo(id) {
+function updateTodo(res,id) {
     db.updateTodo(id, function (err) {
         if (err) {
             res.json({success: 0});
@@ -98,6 +103,7 @@ function getTodo(res) {
 
 
         if (err) {
+            console.log(JSON.stringify(err));
             res.json({success: 0});
         }
         else {
@@ -109,7 +115,7 @@ function getTodo(res) {
 
 }
 
-function addTodo(id, content, status) {
+function addTodo(res,id, content, status) {
     db.addTodo(id, content, status, function (err) {
         if (err) {
             res.json({success: 0});
@@ -122,7 +128,7 @@ function addTodo(id, content, status) {
 }
 
 
-function delTodoById(id) {
+function delTodoById(res,id) {
     db.delTodoById(id, function (err) {
         if (err) {
             res.json({success: 0});
@@ -134,13 +140,21 @@ function delTodoById(id) {
 
 }
 
-function delAllComplete() {
+function delAllComplete(res) {
     db.delAllComplete(function (err) {
         if (err) {
             res.json({success: 0});
         }
         else {
             res.json({success: 1});
+        }
+    });
+}
+
+function initMaxId() {
+    db.getMaxId(function(err,row){
+        if(!err){
+            maxId = row.max;
         }
     });
 }

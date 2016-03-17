@@ -13,23 +13,24 @@ var db = undefined;
 var todoList = {
     //userId:'matchedUserId'
 };
+
 //schema:
 //CREATE  TABLE "main"."UserMatches" ("userId" VARCHAR PRIMARY KEY  NOT NULL  UNIQUE , "partnerId" VARCHAR NOT NULL )
 
 /*
  数据库名是直接硬编码的，所以当调用connect和setup函数时，当前目录中就会生成unclenoway.sqlite文件
-*/
+ */
 var self = this;
-exports.connect = function(callback) {
+exports.connect = function (callback) {
+    //連接資料庫"./db/simpleTodo.sqlite"
     db = new sqlite3.Database("./db/simpleTodo.sqlite", sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
         function (err) {
             if (err) {
-                util.log('FAIL on creating database ' + err);
+                util.log('FAIL on connect database ' + err);
                 callback(err);
             } else {
                 console.log('connect to simpleTodo.sqlite success');
                 //callback(null);
-
                 //loadMemoryCache();
             }
         });
@@ -47,33 +48,28 @@ exports.connect = function(callback) {
 //}
 
 
+exports.getTodo = function (callback) {
+    //查詢所有Todo
+    db.all("SELECT * FROM 'Todo-table' ", function (err, row) {
 
-
-exports.getTodo = function(){
-    //return  todoList ;
-    db.all("SELECT * FROM 'Todo-table' ", function(err,row){
-
-        if (err){
+        if (err) {
             util.log('FAIL to retrieve row ' + err);
-
+            callback(null);
         } else {
             //console.log(row);
-            todoList=row;
-
-            //return (row);
+            todoList = row;
+            callback(todoList);
+            console.log(todoList);
         }
-
-        console.log(todoList);
-        return (todoList);
     });
 
 }
 
-exports.addTodo = function(id,content,status,callback){
-
+exports.addTodo = function (id, content, status, callback) {
+    //新增Todo
     db.run("INSERT INTO 'Todo-table' (id, content, status) " +
         "VALUES (?, ?, ?);",
-        [id,content,status],
+        [id, content, status],
         function (error) {
             if (error) {
                 util.log('FAIL on addTodo ' + error);
@@ -82,26 +78,48 @@ exports.addTodo = function(id,content,status,callback){
                 callback(null);
             }
         });
+};
+
+var r;
+exports.updateTodo = function (id, callback) {
+    //console.log("id=" + id);
+    //更改Todo狀態
+    db.get("SELECT status FROM 'Todo-table' " +
+        "WHERE id = ? ", [id], function (err, row) {
+        if (err) {
+            util.log('FAIL on status ' + err);
+            callback(err);
+        } else {
+            //console.log("row="+JSON.stringify(row)); //JSON.stringify(row)將row轉成JSON輸出
+            r = row.status;     //r是當前id的狀態
+            //console.log(r);
+            callback(null);
+        }
+
+        var reverseR = r == 0 ? 1 : 0;      //如果狀態是0:未完成 改成 1:已完成 ; 如果狀態是1:已完成 改成 0:未完成
+        db.run("UPDATE 'Todo-table' " +
+            "SET status= ? WHERE id = ?", [reverseR, id], function (err) {
+            if (err) {
+                util.log('FAIL on updateTdo ' + err);
+                callback(err);
+            }
+            else {
+                console.log('if r ==1');
+                callback(null);
+            }
+        });
+
+    });
 
 
 }
 
-exports.delTodoById = function(id){
-    //var isSuccess=0;
-    //
-    //for(var index in todoList){
-    //    if(todoList[index].id=id){
-    //        todoList[index].status=-1;
-    //        var isSuccess=1;
-    //
-    //        break;
-    //    }
-    //}
-    //
-    //return isSuccess;
+
+exports.delTodoById = function (id, callback) {
+
     db.run("UPDATE 'Todo-table' " +
-            "SET status='-1' "+
-        "WHERE id in ( ? ) ",
+        "SET status='-1' " +
+        "WHERE id = ? ",
         [id],
         function (err) {
 
@@ -109,21 +127,21 @@ exports.delTodoById = function(id){
                 util.log('FAIL on delTdo ' + err);
                 callback(err);
             } else {
-                //callback(null);
+                callback(null);
             }
         });
 //UPDATE "Todo-table" SET status='-1'  WHERE id in ( 1 );
 }
 
-exports.delAllComplete = function(){
+exports.delAllComplete = function (callback) {
     //for(var index in todoList){
     //    if(todoList[index].status==1){
     //        todoList[index].status=-1;
     //    }
     //}
     db.run("UPDATE 'Todo-table' " +
-        "SET status='-1' "+
-        "WHERE status in (1) ",
+        "SET status='-1' " +
+        "WHERE status = 1 ",
         [status],
         function (err) {
 
@@ -131,12 +149,12 @@ exports.delAllComplete = function(){
                 util.log('FAIL on delTdo ' + err);
                 callback(err);
             } else {
-                //callback(null);
+                callback(null);
             }
         });
+};
 
 
-}
 //exports.forAll = function(doEach, done){
 //    db.each("SELECT * FROM Todo-table", function(err, row){
 //        if (err){

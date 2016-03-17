@@ -29,6 +29,7 @@ exports.connect = function (callback) {
                 util.log('FAIL on connect database ' + err);
                 callback(err);
             } else {
+                callback(null);
                 console.log('connect to simpleTodo.sqlite success');
                 //callback(null);
                 //loadMemoryCache();
@@ -54,11 +55,11 @@ exports.getTodo = function (callback) {
 
         if (err) {
             util.log('FAIL to retrieve row ' + err);
-            callback(null);
+            callback(err);
         } else {
             //console.log(row);
             todoList = row;
-            callback(todoList);
+            callback(null,todoList);
             console.log(todoList);
         }
     });
@@ -82,18 +83,17 @@ exports.addTodo = function (id, content, status, callback) {
 
 var r;
 exports.updateTodo = function (id, callback) {
-    //console.log("id=" + id);
+    console.log("id=" + id);
     //更改Todo狀態
     db.get("SELECT status FROM 'Todo-table' " +
         "WHERE id = ? ", [id], function (err, row) {
         if (err) {
             util.log('FAIL on status ' + err);
-            callback(err);
         } else {
-            //console.log("row="+JSON.stringify(row)); //JSON.stringify(row)將row轉成JSON輸出
+            console.log("row="+JSON.stringify(row)); //JSON.stringify(row)將row轉成JSON輸出
             r = row.status;     //r是當前id的狀態
             //console.log(r);
-            callback(null);
+            //callback(null);
         }
 
         var reverseR = r == 0 ? 1 : 0;      //如果狀態是0:未完成 改成 1:已完成 ; 如果狀態是1:已完成 改成 0:未完成
@@ -153,6 +153,16 @@ exports.delAllComplete = function (callback) {
         });
 };
 
+exports.getMaxId= function(callback){
+    db.get("select max(id) as max from 'Todo-table' ", [], function (err, row) {
+         if(!err){
+            callback(null,row);
+        }else{
+            callback(err);
+        }
+    });
+
+};
 
 //exports.forAll = function(doEach, done){
 //    db.each("SELECT * FROM Todo-table", function(err, row){

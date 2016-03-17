@@ -104,7 +104,7 @@ exports.updateTodo = function (id, callback) {
                 callback(err);
             }
             else {
-                console.log('if r ==1');
+                //console.log('if r ==1');
                 callback(null);
             }
         });
@@ -142,7 +142,6 @@ exports.delAllComplete = function (callback) {
     db.run("UPDATE 'Todo-table' " +
         "SET status='-1' " +
         "WHERE status = 1 ",
-        [status],
         function (err) {
 
             if (err) {

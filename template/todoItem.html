@@ -1,0 +1,15 @@
+
+<li>
+
+    <div class="view">
+
+        <input class='toggle' type=checkbox id= '<%= id %>'
+               onclick="selectTodo( '<%= id %>' ) "/>
+
+        <label style='font-size: 16pt;'>
+            <%= content %>
+        </label>
+
+        <button class='destroy' onclick='deleteTodo("<%= id %>")'> </button>
+    </div>
+</li>

@@ -3,17 +3,25 @@
  */
 var express = require('express');
 var bodyParser = require('body-parser');
+var db = require('./database.js');
+db.connect();
+//db.getTodo();
+//updateTodo('2');
+
+
 var app = express();
-var arr ;
+//var arr ;
 
 var todoList = [
-    {id:0,status:0,content:'eat'},
-    {id:1,status:1,content:'play'}
+    {id: 0, status: 0, content: 'eat'},
+    {id: 1, status: 1, content: 'play'}
 ];
-var maxId=1;
 
 
-var allowCrossDomain = function(req, res, next) {
+var maxId = 1;
+
+
+var allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,59 +32,115 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);//CORS middleware
 
 
-
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 
-app.get('/del/todo/:id',function(req,res){
+app.get('/del/todo/:id', function (req, res) {
 //splice
 
-    var isSuccess=0;
-    for(var index in todoList){
-        if(todoList[index].id==req.paramas.id){
-             todoList[index].status=-1;
-            var isSuccess=1;
 
-            break;
-        }
-    }
-
-    res.json({success:isSuccess});
-
- });
-
-
-app.get('/del/allComplete',function(req,res){
-//全刪
-     for(var index in todoList){
-        if(todoList[index].status==1){
-            todoList[index].status=-1;
-         }
-    }
-
-    res.json({success:1});
+    res.json({success: delTodoById(req.paramas.id)});
 
 });
-app.post('/todo',function(req,res){
+
+
+app.get('/del/allComplete', function (req, res) {
+//全刪
+    delAllComplete();
+
+    res.json({success: 1});
+
+});
+app.post('/todo', function (req, res) {
         var content = req.body.content;
         var status = req.body.status;
 
         maxId++;
-        todoList.push({id:maxId,content: content,status:status});
-         res.json({success:1});
+         addTodo(maxId, content, status);
+        res.json({success: 1});
 
     }
 );
 
-app.get('/todo',function(req,res){
-     // Pass to next layer of middleware
-    res.json(todoList);
+ app.get('/todo', function (req, res) {
+    // Pass to next layer of middleware
+    res.json(getTodo(res));
 });
 
+app.get('/update/todo/:todoId', function (req, res) {
+    // Pass to next layer of middleware
+    res.json(updateTodo(req.paramas.id));
+ });
 
 
 app.listen(3000, function () {
     console.log('' +
         'app listening on port 3000!');
 });
+
+
+function updateTodo(id) {
+    db.updateTodo(id, function (err) {
+        if (err) {
+            res.json({success: 0});
+        }
+        else {
+            res.json({success: 1});
+        }
+
+    });
+}
+
+
+function getTodo(res) {
+    db.getTodo(function (err, todoList) {
+
+
+        if (err) {
+            res.json({success: 0});
+        }
+        else {
+            res.json(todoList);
+        }
+
+
+    });
+
+}
+
+function addTodo(id, content, status) {
+    db.addTodo(id, content, status, function (err) {
+        if (err) {
+            res.json({success: 0});
+        }
+        else {
+            res.json({success: 1});
+        }
+
+    });
+}
+
+
+function delTodoById(id) {
+    db.delTodoById(id, function (err) {
+        if (err) {
+            res.json({success: 0});
+        }
+        else {
+            res.json({success: 1});
+        }
+    });
+
+}
+
+function delAllComplete() {
+    db.delAllComplete(function (err) {
+        if (err) {
+            res.json({success: 0});
+        }
+        else {
+            res.json({success: 1});
+        }
+    });
+}

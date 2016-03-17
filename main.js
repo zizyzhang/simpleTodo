@@ -48,13 +48,22 @@ function getTodo(){
 
         for(var i=0;i<data.length;i++) {
             //console.log(data[i].id);
-            if (data[i].status== -1 || data[i].status== 1 )continue;
+            if (data[i].status== -1 )continue;
 
             var  compiled=  _.template($('#tpl').html());
 
+            var li_class=data[i].status==1?'completed':'';
+            var isChecked =data[i].status==1?true:false;
+
             console.log(JSON.stringify(data));
 
-            todoList.html(todoList.html()+ compiled({content:data[i].content ,id:data[i].id }));
+            todoList.html(todoList.html()+ compiled({content:data[i].content ,id:data[i].id,li_class: li_class}));
+            if(isChecked){
+                $('#check_' + data[i].id).attr('checked','checked');
+
+            }else{
+                $('#check_' + data[i].id).attr('checked',null);
+            }
 
             //todoList.html(todoList.html() +
             //

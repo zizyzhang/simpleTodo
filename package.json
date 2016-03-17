@@ -18,7 +18,5 @@
   },
   "homepage": "https://github.com/zizyzhang/simpleTodo#readme",
   "dependencies": {
-    "mocha": "^2.4.5",
-    "should": "^8.2.2"
-  }
+   }
 }

@@ -57,13 +57,13 @@ app.post('/todo', function (req, res) {
         var status = req.body.status;
 
         maxId++;
-        addTodo(maxId, content, status);
+         addTodo(maxId, content, status);
         res.json({success: 1});
 
     }
 );
 
-app.get('/todo', function (req, res) {
+ app.get('/todo', function (req, res) {
     // Pass to next layer of middleware
     res.json(getTodo(res));
 });
@@ -71,7 +71,7 @@ app.get('/todo', function (req, res) {
 app.get('/update/todo/:todoId', function (req, res) {
     // Pass to next layer of middleware
     res.json(updateTodo(req.paramas.id));
-});
+ });
 
 
 app.listen(3000, function () {

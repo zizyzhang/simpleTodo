@@ -155,6 +155,7 @@ function initMaxId() {
     db.getMaxId(function(err,row){
         if(!err){
             maxId = row.max;
+            console.log("maxId:"+maxId);
         }
     });
 }

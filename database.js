@@ -154,10 +154,10 @@ exports.delAllComplete = function (callback) {
 };
 
 exports.getMaxId= function(callback){
-    db.get("select max(id) as max from 'Todo-table' ", [], function (err, row) {
-         if(!err){
+    db.get("select max(cast(id as int)) as max  from 'Todo-table' ", [], function (err, row) {
+          if(!err){
             callback(null,row);
-        }else{
+         }else{
             callback(err);
         }
     });
